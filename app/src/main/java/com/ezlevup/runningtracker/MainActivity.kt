@@ -1,35 +1,86 @@
-
 package com.ezlevup.runningtracker
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavDestination.Companion.hierarchy
+import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
+import com.ezlevup.runningtracker.presentation.history.HistoryScreen
+import com.ezlevup.runningtracker.presentation.home.HomeScreen
+import com.ezlevup.runningtracker.util.Screen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MaterialTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
+                val navController = rememberNavController()
+                val items =
+                        listOf(
+                                BottomNavItem("홈", Screen.Home.route, Icons.Default.Home),
+                                BottomNavItem("기록", Screen.History.route, Icons.Default.History)
+                        )
+
+                Scaffold(
+                        bottomBar = {
+                            NavigationBar {
+                                val navBackStackEntry by
+                                        navController.currentBackStackEntryAsState()
+                                val currentDestination = navBackStackEntry?.destination
+                                items.forEach { item ->
+                                    NavigationBarItem(
+                                            icon = {
+                                                Icon(item.icon, contentDescription = item.title)
+                                            },
+                                            label = { Text(item.title) },
+                                            selected =
+                                                    currentDestination?.hierarchy?.any {
+                                                        it.route == item.route
+                                                    } == true,
+                                            onClick = {
+                                                navController.navigate(item.route) {
+                                                    popUpTo(
+                                                            navController.graph
+                                                                    .findStartDestination()
+                                                                    .id
+                                                    ) { saveState = true }
+                                                    launchSingleTop = true
+                                                    restoreState = true
+                                                }
+                                            }
+                                    )
+                                }
+                            }
+                        }
+                ) { innerPadding ->
+                    NavHost(
+                            navController = navController,
+                            startDestination = Screen.Home.route,
+                            modifier = Modifier.padding(innerPadding)
                     ) {
-                        Text(text = "러닝 트래커 초기화 완료")
+                        composable(Screen.Home.route) { HomeScreen() }
+                        composable(Screen.History.route) { HistoryScreen() }
                     }
                 }
             }
         }
     }
 }
+
+data class BottomNavItem(
+        val title: String,
+        val route: String,
+        val icon: androidx.compose.ui.graphics.vector.ImageVector
+)

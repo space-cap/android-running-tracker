@@ -1,6 +1,7 @@
 package com.ezlevup.runningtracker
 
 import android.app.Application
+import com.ezlevup.runningtracker.di.appModule
 import com.ezlevup.runningtracker.di.dataModule
 import com.ezlevup.runningtracker.di.serviceModule
 import org.koin.android.ext.koin.androidContext
@@ -19,7 +20,7 @@ class RunningTrackerApp : Application() {
         startKoin {
             androidLogger()
             androidContext(this@RunningTrackerApp)
-            modules(dataModule, serviceModule)
+            modules(dataModule, serviceModule, appModule)
         }
     }
 }
