@@ -8,8 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.*
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -30,7 +29,7 @@ class MainActivity : ComponentActivity() {
                 val items =
                         listOf(
                                 BottomNavItem("홈", Screen.Home.route, Icons.Default.Home),
-                                BottomNavItem("기록", Screen.History.route, Icons.Default.History)
+                                BottomNavItem("기록", Screen.History.route, Icons.Filled.History)
                         )
 
                 Scaffold(

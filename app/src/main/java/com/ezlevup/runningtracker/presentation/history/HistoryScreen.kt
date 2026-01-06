@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.ezlevup.runningtracker.domain.repository.RunningRepository
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.stateIn
@@ -15,7 +16,7 @@ class HistoryViewModel(repository: RunningRepository) : ViewModel() {
     val runs =
             repository
                     .getAllRunsSortedByDate()
-                    .stateIn(androidx.lifecycle.viewModelScope, SharingStarted.Lazily, emptyList())
+                    .stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
 }
 
 @Composable

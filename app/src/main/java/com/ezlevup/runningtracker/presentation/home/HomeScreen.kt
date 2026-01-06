@@ -12,7 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.ezlevup.runningtracker.presentation.MainViewModel
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
@@ -22,7 +21,8 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(viewModel: MainViewModel = koinViewModel()) {
     val context = LocalContext.current
     val isTracking by viewModel.isTracking.observeAsState(false)
-    val pathPoints by viewModel.pathPoints.observeAsState(mutableListOf())
+    val pathPoints: com.ezlevup.runningtracker.data.service.Polylines by
+            viewModel.pathPoints.observeAsState(mutableListOf())
 
     val permissionsToRequest =
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -56,7 +56,15 @@ fun HomeScreen(viewModel: MainViewModel = koinViewModel()) {
                     modifier = Modifier.fillMaxSize(),
                     cameraPositionState = cameraPositionState,
                     properties = MapProperties(isMyLocationEnabled = true)
-            ) { pathPoints.forEach { polyline -> Polyline(points = polyline) } }
+            ) {
+                pathPoints.forEach { polyline ->
+                    com.google.maps.android.compose.Polyline(
+                            points = polyline,
+                            color = androidx.compose.ui.graphics.Color.Red,
+                            width = 10f
+                    )
+                }
+            }
         }
 
         Row(
